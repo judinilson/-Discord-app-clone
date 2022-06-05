@@ -24,7 +24,6 @@ const client = StreamChat.getInstance(API_KEY);
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const [selectedChannel, setSelectedChannel] = useState(null);
 
   useEffect(() => {
     // this is done when component mounts
@@ -34,10 +33,6 @@ export default function App() {
     };
   }, []);
 
-  const onChannelSelect = (channel) => {
-    setSelectedChannel(channel);
-  };
-
   if (!isLoadingComplete) {
     return null;
   } else {
@@ -46,22 +41,7 @@ export default function App() {
         <AuthContext>
           <OverlayProvider>
             <Chat client={client}>
-              <Navigation colorScheme={colorScheme} />
-              {/* {!selectedChannel ? (
-              <ChannelList onSelect={onChannelSelect} />
-            ) : (
-              <>
-                <Channel channel={selectedChannel}></Channel>
-                <Text
-                  style={{ margin: 50 }}
-                  onPress={() => setSelectedChannel(null)}
-                >
-                  Go Back
-                </Text>
-                <MessageList />
-                <MessageList />
-              </>
-            )} */}
+              <Navigation colorScheme={"dark"} />
             </Chat>
           </OverlayProvider>
         </AuthContext>
