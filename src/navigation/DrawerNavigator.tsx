@@ -29,11 +29,11 @@ const DrawerNavigator = () => {
           headerShown: false,
         }}
       />
-      {/* <Drawer.Screen
+      <Drawer.Screen
         name="UserList"
         component={UserListScreen}
         options={{ title: "Users" }}
-      />*/}
+      />
 
       <Drawer.Screen
         name="NewChannel"

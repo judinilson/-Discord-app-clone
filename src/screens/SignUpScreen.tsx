@@ -1,4 +1,5 @@
 //import { Auth } from "aws-amplify";
+import { useSignInEmailPassword, useSignUpEmailPassword } from "@nhost/react";
 import { useState } from "react";
 import {
   Text,
@@ -13,10 +14,24 @@ import { useAuthContext } from "../context/AuthContext";
 import Navigation from "../navigation";
 
 const SignUpScreen = () => {
-  const [username, setUsername] = useState("Fabio");
+  const [email, setEmail] = useState("Fabio@gmail.com");
   const [name, setName] = useState("Baban");
-  const [password, setPassword] = useState("fafa");
+  const [password, setPassword] = useState("fafa0000");
   const { setUserId } = useAuthContext();
+
+  const {
+    signInEmailPassword,
+    isLoading,
+    isSuccess,
+    needsEmailVerification,
+    isError,
+    error,
+  } = useSignInEmailPassword();
+
+  const handleOnSubmit = () => {
+    signInEmailPassword(email, password);
+  };
+  const disableForm = isLoading;
 
   const { client } = useChatContext();
 
@@ -25,18 +40,18 @@ const SignUpScreen = () => {
 
     await client.connectUser(
       {
-        id: username,
+        id: name,
         name: name,
         image:
           "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/elon.png",
       },
-      client.devToken(username)
+      client.devToken(name)
     );
 
     const channel = client.channel("livestream", "public", { name: "Public" });
     await channel.watch();
 
-    setUserId(username);
+    setUserId(name);
   };
 
   const signUp = () => {
@@ -45,6 +60,9 @@ const SignUpScreen = () => {
     // navigate to the home page
   };
 
+  if (isSuccess) {
+    signUp();
+  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -54,11 +72,11 @@ const SignUpScreen = () => {
         <Text style={styles.text}>ACCOUNT INFORMATION</Text>
 
         <TextInput
-          value={username}
-          onChangeText={setUsername}
+          value={email}
+          onChangeText={setEmail}
           style={styles.input}
           placeholderTextColor="grey"
-          placeholder="Username"
+          placeholder="email"
         />
         <TextInput
           value={name}
@@ -77,9 +95,16 @@ const SignUpScreen = () => {
 
         <Text style={styles.forgotPasswordText}>Forgot password?</Text>
 
-        <Pressable style={styles.button} onPress={signUp}>
+        <Pressable
+          style={styles.button}
+          onPress={handleOnSubmit}
+          disabled={disableForm}
+        >
           <Text style={styles.buttonText}>Login</Text>
         </Pressable>
+        {isError ? (
+          <Text style={styles.errorText}>{error?.message}</Text>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -131,6 +156,9 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     marginVertical: 5,
+  },
+  errorText: {
+    color: "red",
   },
 });
 

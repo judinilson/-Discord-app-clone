@@ -1,4 +1,5 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { NhostClient, NhostReactProvider } from "@nhost/react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Text } from "./src/components/Themed";
@@ -15,11 +16,21 @@ import {
   ChannelList,
   Channel,
   MessageList,
+  DeepPartial,
+  Theme,
 } from "stream-chat-expo";
 import AuthContext from "./src/context/AuthContext";
+import { StreamColors } from "./src/constants/Colors";
 
 const API_KEY = "kz2qdnrtyh4e";
 const client = StreamChat.getInstance(API_KEY);
+const theme: DeepPartial<Theme> = {
+  colors: StreamColors,
+};
+
+const nhost = new NhostClient({
+  backendUrl: "https://rxmaecrgmhgpuwofcnuq.nhost.run",
+});
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -39,13 +50,14 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <AuthContext>
-          <OverlayProvider>
-            <Chat client={client}>
-              <Navigation colorScheme={"dark"} />
-            </Chat>
-          </OverlayProvider>
+          <NhostReactProvider nhost={nhost}>
+            <OverlayProvider value={{ style: theme }}>
+              <Chat client={client}>
+                <Navigation colorScheme={"dark"} />
+              </Chat>
+            </OverlayProvider>
+          </NhostReactProvider>
         </AuthContext>
-
         <StatusBar style="light" />
       </SafeAreaProvider>
     );
